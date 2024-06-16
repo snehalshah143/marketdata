@@ -47,18 +47,21 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
   //   @Autowired
   //   ConversionUtil conversionUtil;
 
-  public StockData getStockDataForTicker(
+  public List<StockData> getStockDataForTicker(
       SmartConnect smartConnect, Ticker ticker, CandleTimeFrame candleTimeFrame, String timeStamp) {
     String symbolId =
         SymbolKeyUtil.getSymbolId(
             "RELIANCE", CandleTimeFrame.ONE_DAY, InstrumentType.EQ, ExchangeSegment.NSE);
-    Optional<StockDataDailyPersistable> stockDataDailyPersistable =
-        stockDataDailyRepository.findById(symbolId);
-    stockDataDailyPersistable.ifPresent(p -> System.out.println(p.toString()));
-    if (stockDataDailyPersistable.isPresent()) {
-      return stockDataDailyMapper.mapPersistableToDomain(stockDataDailyPersistable.get());
+    Optional<List<StockDataDailyPersistable>> stockDataDailyPersistableList =
+        Optional.ofNullable(stockDataDailyRepository.findStockDataForSymbolKey(symbolId));
+    List<StockData> stockDataList = Collections.EMPTY_LIST;
+    if (stockDataDailyPersistableList.isPresent()) {
+      stockDataList =
+          stockDataDailyPersistableList.get().stream()
+              .map(p -> stockDataDailyMapper.mapPersistableToDomain((StockDataDailyPersistable) p))
+              .collect(Collectors.toList());
     }
-    return null;
+    return stockDataList;
   }
 
   public Set<StockData> getHistoricalDataForTicker(

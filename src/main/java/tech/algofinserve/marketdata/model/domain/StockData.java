@@ -1,43 +1,17 @@
 package tech.algofinserve.marketdata.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class StockData implements Serializable {
 
   public StockData() {}
 
   private String symbolId;
   private LocalDateTime timestamp;
-
-  /*   public StockData(CandleTimeFrame candleTimeFrame){
-  super(candleTimeFrame);
-     }*/
-
-  /*
-  public SymbolKey symbolKey;
-
-      public SymbolKey getSymbolKey() {
-          return symbolKey;
-      }
-
-      public void setSymbolKey(SymbolKey symbolKey) {
-          this.symbolKey = symbolKey;
-      }
-  */
-
-  // Part of composite key
-  /*public CandleTimeFrame candleTimeFrame;
-  //Part of composite key
-  private String symbol;
-  //Part of composite key
-  private ExchangeSegment exchangeSegment;
-
-  //Part of composite key
-  private InstrumentType instrumentType;
-
-  private LocalDateTime timestamp;*/
 
   public String getSymbolId() {
     return symbolId;

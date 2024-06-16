@@ -50,7 +50,7 @@ public class MarketDataController {
   }
 
   @PostMapping(path = "/marketdata/angel/getmarketdata")
-  public ResponseEntity<StockData> getStockData() {
+  public ResponseEntity<List<StockData>> getStockData() {
 
     Ticker ticker = new Ticker();
     ticker.setToken(
@@ -69,11 +69,11 @@ public class MarketDataController {
     //  Set<StockData> stockDataList=
     // angelMarketDataServiceImpl.getStockDataForTimeFrame(ticker.getStockSymbol(),
     // CandleTimeFrame.ONE_DAY);
-    StockData stockDataList =
+    List<StockData> stockDataList =
         angelMarketDataServiceImpl.getStockDataForTicker(
             smartConnect, ticker, CandleTimeFrame.ONE_DAY, timeStamp);
 
-    return new ResponseEntity<StockData>(stockDataList, HttpStatus.OK);
+    return new ResponseEntity<List<StockData>>(stockDataList, HttpStatus.OK);
   }
 
   @PostMapping(path = "/marketdata/angel/getbarseries")
