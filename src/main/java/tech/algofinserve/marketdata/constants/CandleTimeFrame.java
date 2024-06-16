@@ -11,7 +11,7 @@ public enum CandleTimeFrame {
   SEVENTY_FIVE_MINUTE("75M"),
   MONTH("M"),
   WEEK("W"),
-  DAY("D");
+  ONE_DAY("D");
 
   private final String value;
 

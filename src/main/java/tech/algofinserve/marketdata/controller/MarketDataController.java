@@ -44,7 +44,7 @@ public class MarketDataController {
 
     Set<StockData> stockDataList =
         angelMarketDataServiceImpl.getHistoricalDataForTicker(
-            smartConnect, ticker, CandleTimeFrame.DAY, fromDate, toDate);
+            smartConnect, ticker, CandleTimeFrame.ONE_DAY, fromDate, toDate);
 
     return new ResponseEntity<String>("Data Download Completed.", HttpStatus.OK);
   }
@@ -71,7 +71,7 @@ public class MarketDataController {
     // CandleTimeFrame.ONE_DAY);
     StockData stockDataList =
         angelMarketDataServiceImpl.getStockDataForTicker(
-            smartConnect, ticker, CandleTimeFrame.DAY, timeStamp);
+            smartConnect, ticker, CandleTimeFrame.ONE_DAY, timeStamp);
 
     return new ResponseEntity<StockData>(stockDataList, HttpStatus.OK);
   }
@@ -92,7 +92,7 @@ public class MarketDataController {
     String toDate = "2024-01-17 00:00";
 
     List<Bar> barList =
-        angelMarketDataServiceImpl.getBarSeries(ticker.getStockSymbol(), CandleTimeFrame.DAY);
+        angelMarketDataServiceImpl.getBarSeries(ticker.getStockSymbol(), CandleTimeFrame.ONE_DAY);
 
     return new ResponseEntity<List<Bar>>(barList, HttpStatus.OK);
   }

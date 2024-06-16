@@ -3,6 +3,7 @@ package tech.algofinserve.marketdata.model.persistable;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "technical_data_daily")
@@ -12,8 +13,7 @@ public class TechnicalDataPersistable implements Serializable {
   /*  public  TechnicalDataPersistable(SymbolKeyPersistable symbolKeyPersistable){
       this.symbolKeyPersistable=symbolKeyPersistable;
   }*/
-
-  private String symbolId;
+  @Id private String symbolId;
   private LocalDateTime timestamp;
 
   public String getSymbolId() {

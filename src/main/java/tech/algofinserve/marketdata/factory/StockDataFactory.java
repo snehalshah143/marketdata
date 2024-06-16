@@ -18,7 +18,7 @@ public class StockDataFactory {
   public static StockData getStockDataObject(CandleTimeFrame candleTimeFrame) {
 
     switch (candleTimeFrame) {
-      case DAY:
+      case ONE_DAY:
         return new StockDataDaily();
       case FIFTEEN_MINUTE:
         return new StockData15Min();
@@ -31,7 +31,7 @@ public class StockDataFactory {
   public static Long getStockDataCandleNumber(CandleTimeFrame candleTimeFrame) {
 
     switch (candleTimeFrame) {
-      case DAY:
+      case ONE_DAY:
         return 1L;
       case FIFTEEN_MINUTE:
         return 2L;
@@ -44,7 +44,7 @@ public class StockDataFactory {
   public MongoRepository getStockDataRepository(CandleTimeFrame candleTimeFrame) {
 
     switch (candleTimeFrame) {
-      case DAY:
+      case ONE_DAY:
         return stockDataDailyRepository;
       case FIFTEEN_MINUTE:
         return stockData15MinRepository;

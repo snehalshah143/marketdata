@@ -51,7 +51,7 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
       SmartConnect smartConnect, Ticker ticker, CandleTimeFrame candleTimeFrame, String timeStamp) {
     String symbolId =
         SymbolKeyUtil.getSymbolId(
-            "RELIANCE", CandleTimeFrame.DAY, InstrumentType.EQ, ExchangeSegment.NSE);
+            "RELIANCE", CandleTimeFrame.ONE_DAY, InstrumentType.EQ, ExchangeSegment.NSE);
     Optional<StockDataDailyPersistable> stockDataDailyPersistable =
         stockDataDailyRepository.findById(symbolId);
     stockDataDailyPersistable.ifPresent(p -> System.out.println(p.toString()));
@@ -82,7 +82,7 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
 
     Set<StockData> stockDataDailyList =
         convertRawDataToStockDataList(result, ticker, candleTimeFrame);
-    addStockDataToStore(ticker, CandleTimeFrame.DAY, stockDataDailyList);
+    addStockDataToStore(ticker, CandleTimeFrame.ONE_DAY, stockDataDailyList);
 
     return stockDataDailyList;
   }
@@ -169,7 +169,7 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
     JSONObject requestObject = new JSONObject();
     requestObject.put("exchange", ticker.getExchangeSegment().value());
     requestObject.put("symboltoken", ticker.getToken());
-    requestObject.put("interval", candleTimeFrame.value());
+    requestObject.put("interval", candleTimeFrame.name());
     requestObject.put("fromdate", fromDate);
     requestObject.put("todate", toDate);
     return requestObject;
