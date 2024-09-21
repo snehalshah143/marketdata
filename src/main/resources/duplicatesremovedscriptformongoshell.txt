@@ -1,0 +1,32 @@
+use algostation; 
+
+const field1 = "symbolId"; 
+const field2 = "timestamp"; 
+
+
+const cursor = db.stock_data_daily.find();
+
+const seen = {};
+const idsToRemove = [];
+
+// Loop through each document
+cursor.forEach(doc => {
+  // Create a unique key for the combination of the fields
+  const key = doc[field1] + "|" + doc[field2];
+
+  if (seen[key]) {
+    // If the key is already seen, add the ID to the removal list
+    idsToRemove.push(doc._id);
+  } else {
+    // Otherwise, mark this key as seen
+    seen[key] = true;
+  }
+});
+
+// Perform the deletion of duplicates
+if (idsToRemove.length > 0) {
+  db.stock_data_daily.deleteMany({ _id: { $in: idsToRemove } });
+  print(`Removed ${idsToRemove.length} duplicate(s).`);
+} else {
+  print("No duplicates found.");
+}

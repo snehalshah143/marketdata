@@ -40,13 +40,13 @@ public class MarketDataController {
     ticker.setInstrumentType(InstrumentType.EQ);
     String fromDate = "2023-01-01 00:00";
 
-    String toDate = "2024-01-17 00:00";
+    String toDate = "2024-09-17 00:00";
 
     Set<StockData> stockDataList =
         angelMarketDataServiceImpl.getHistoricalDataForTicker(
             smartConnect, ticker, CandleTimeFrame.ONE_DAY, fromDate, toDate);
 
-    return new ResponseEntity<String>("Data Download Completed.", HttpStatus.OK);
+    return new ResponseEntity<String>("Data Download Completed For Symbol.", HttpStatus.OK);
   }
 
   @PostMapping(path = "/marketdata/angel/getmarketdata")
