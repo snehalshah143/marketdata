@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tech.algofinserve.marketdata.constants.ExchangeSegment;
-import tech.algofinserve.marketdata.dao.InstrumentTickerAngelRepository;
+import tech.algofinserve.marketdata.constants.ExchSeg;
+import tech.algofinserve.marketdata.dao.sqllite.InstrumentTickerAngelRepositorySqllite;
 import tech.algofinserve.marketdata.mapper.InstrumentTickerAngelMapper;
 import tech.algofinserve.marketdata.model.domain.InstrumentTickerAngel;
 import tech.algofinserve.marketdata.model.persistable.InstrumentTickerAngelPersistable;
@@ -35,13 +35,16 @@ public class AngelMetaDataServiceImpl implements MetaDataService {
   private final String ANGEL_ALL_INSTRUMENT_FILE_CSV = "src/main/resources/all_instrument.csv";
   private final String ANGEL_ALL_INSTRUMENT_FILE_TXT = "src/main/resources/all_instrument_txt.txt";
 
-  @Autowired InstrumentTickerAngelRepository instrumentTickerRepository;
+  /*  @Autowired
+  InstrumentTickerAngelRepositoryMongo instrumentTickerRepository;*/
+
+  @Autowired InstrumentTickerAngelRepositorySqllite instrumentTickerAngelRepositorySqllite;
 
   @Autowired InstrumentTickerAngelMapper instrumentTickerMapper;
 
   // StockSymbol=StockName
   private Map<String, String> allChartInkSymbolMetaData = new HashMap<>();
-  private Map<ExchangeSegment, Map<String, InstrumentTickerAngel>> instrumentTickerForExchangeMap =
+  private Map<ExchSeg, Map<String, InstrumentTickerAngel>> instrumentTickerForExchangeMap =
       new ConcurrentHashMap<>();
 
   // Should Call On Server startup or load from cache
@@ -97,10 +100,10 @@ public class AngelMetaDataServiceImpl implements MetaDataService {
             InstrumentTickerAngel instrument =
                 objectMapper.readValue(item.toString(), InstrumentTickerAngel.class);
 
-            ExchangeSegment instrumentExchangeSegment = null;
+            ExchSeg instrumentExchSeg = null;
             try {
-              instrumentExchangeSegment = ExchangeSegment.valueOf(instrument.getExchSeg());
-              populateInstrumentTickerForExchangeMap(instrument, instrumentExchangeSegment);
+              instrumentExchSeg = ExchSeg.valueOf(instrument.getExchSeg());
+              populateInstrumentTickerForExchangeMap(instrument, instrumentExchSeg);
 
             } catch (IllegalArgumentException e) {
 
@@ -112,7 +115,7 @@ public class AngelMetaDataServiceImpl implements MetaDataService {
           }
         });
 
-    Arrays.stream(ExchangeSegment.values())
+    Arrays.stream(ExchSeg.values())
         .forEach(
             p -> {
               List<InstrumentTickerAngel> instrumentList = new ArrayList<>();
@@ -125,15 +128,13 @@ public class AngelMetaDataServiceImpl implements MetaDataService {
   }
 
   private void populateInstrumentTickerForExchangeMap(
-      InstrumentTickerAngel instrument, ExchangeSegment instrumentExchangeSegment) {
-    if (instrumentTickerForExchangeMap.containsKey(instrumentExchangeSegment)) {
-      instrumentTickerForExchangeMap
-          .get(instrumentExchangeSegment)
-          .put(instrument.getName(), instrument);
+      InstrumentTickerAngel instrument, ExchSeg instrumentExchSeg) {
+    if (instrumentTickerForExchangeMap.containsKey(instrumentExchSeg)) {
+      instrumentTickerForExchangeMap.get(instrumentExchSeg).put(instrument.getName(), instrument);
     } else {
       Map<String, InstrumentTickerAngel> instrumentTickerMap = new HashMap<>();
       instrumentTickerMap.put(instrument.getName(), instrument);
-      instrumentTickerForExchangeMap.put(instrumentExchangeSegment, instrumentTickerMap);
+      instrumentTickerForExchangeMap.put(instrumentExchSeg, instrumentTickerMap);
     }
   }
 
@@ -156,23 +157,24 @@ public class AngelMetaDataServiceImpl implements MetaDataService {
         instrumentTickerAngelList.stream()
             .map(p -> instrumentTickerMapper.mapDomainToPersistable(p))
             .collect(Collectors.toList());
-    instrumentTickerRepository.saveAll(instrumentPersistableList);
+    instrumentTickerAngelRepositorySqllite.saveAll(instrumentPersistableList);
   }
 
   public void deleteAllInstrumentTicker() {
 
-    instrumentTickerRepository.deleteAll();
+    instrumentTickerAngelRepositorySqllite.deleteAll();
     instrumentTickerForExchangeMap.clear();
   }
 
   public Map<String, InstrumentTickerAngel> getInstrumentTickerMapForExchangeSegment(
-      ExchangeSegment exchangeSegment) {
-    if (!instrumentTickerForExchangeMap.containsKey(exchangeSegment)) {
+      ExchSeg exchSeg) {
+    if (!instrumentTickerForExchangeMap.containsKey(exchSeg)) {
       Map<String, InstrumentTickerAngel> instrumentTickerMap = new ConcurrentHashMap<>();
 
       List<InstrumentTickerAngelPersistable> instrumentTickerAngelList =
-          instrumentTickerRepository.findInstrumentTickerByExchangeSegment(exchangeSegment.value());
-
+          //
+          // instrumentTickerAngelRepositorySqllite.findInstrumentTickerByExchangeSegment(exchSeg.value());
+          instrumentTickerAngelRepositorySqllite.findAllByExchSeg(exchSeg.value());
       instrumentTickerAngelList.stream()
           .forEach(
               p -> {
@@ -180,15 +182,14 @@ public class AngelMetaDataServiceImpl implements MetaDataService {
                     p.getName(), instrumentTickerMapper.mapPersistableToDomain(p));
               });
 
-      instrumentTickerForExchangeMap.put(exchangeSegment, instrumentTickerMap);
+      instrumentTickerForExchangeMap.put(exchSeg, instrumentTickerMap);
     }
-    return instrumentTickerForExchangeMap.get(exchangeSegment);
+    return instrumentTickerForExchangeMap.get(exchSeg);
   }
 
-  public InstrumentTickerAngel getInstrumentTickerForStockName(
-      String stockName, ExchangeSegment exchangeSegment) {
+  public InstrumentTickerAngel getInstrumentTickerForStockName(String stockName, ExchSeg exchSeg) {
 
-    return getInstrumentTickerMapForExchangeSegment(exchangeSegment).get(stockName);
+    return getInstrumentTickerMapForExchangeSegment(exchSeg).get(stockName);
   }
 
   public void writeDataToFile(String fileLocation, Class typeOfObject, List dataList) {

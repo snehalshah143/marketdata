@@ -25,6 +25,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
+
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
@@ -117,14 +118,15 @@
 
 
     <!-- Database Related -->
-    <dependency>
+   <dependency>
         <groupId>org.xerial</groupId>
         <artifactId>sqlite-jdbc</artifactId>
-        <version>3.16.1</version>
+        <version>3.36.0.3</version>
     </dependency>
 
-    <!-- Mongo DB-->
 
+    <!-- Mongo DB-->
+<!--
     <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -133,7 +135,7 @@
         <groupId>org.mongodb</groupId>
         <artifactId>mongo-java-driver</artifactId>
         <version>2.12.3</version>
-    </dependency>
+    </dependency>-->
 
 
     <!--	<dependency>

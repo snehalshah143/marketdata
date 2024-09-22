@@ -3,19 +3,28 @@ package tech.algofinserve.marketdata.model.persistable;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import tech.algofinserve.marketdata.model.domain.TechnicalData;
 
 // @Document(collection = "stock_data_daily")
+@MappedSuperclass
 public abstract class StockDataPersistable implements Serializable {
   /*    public StockDataPersistable(CandleTimeFrame candleTimeFrame) {
       super(candleTimeFrame);
   }*/
   public StockDataPersistable() {}
 
-  @Id private String symbolId;
-  private LocalDateTime timestamp;
+  /*  @EmbeddedId
+  private StockDataId id;*/
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
+  private String symbolId;
+  private LocalDateTime timestamp;
   private Long candleNum;
 
   private Double open;
@@ -117,7 +126,8 @@ public abstract class StockDataPersistable implements Serializable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     StockDataPersistable that = (StockDataPersistable) o;
-    return symbolId.equals(that.symbolId)
+    return // id.equals(that.id)
+    symbolId.equals(that.symbolId)
         && timestamp.equals(that.timestamp)
         && Objects.equals(candleNum, that.candleNum)
         && Objects.equals(open, that.open)
@@ -132,6 +142,7 @@ public abstract class StockDataPersistable implements Serializable {
   @Override
   public int hashCode() {
     return Objects.hash(
+        // id,
         symbolId,
         timestamp,
         candleNum,

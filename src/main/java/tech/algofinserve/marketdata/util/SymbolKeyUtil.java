@@ -1,7 +1,7 @@
 package tech.algofinserve.marketdata.util;
 
 import tech.algofinserve.marketdata.constants.CandleTimeFrame;
-import tech.algofinserve.marketdata.constants.ExchangeSegment;
+import tech.algofinserve.marketdata.constants.ExchSeg;
 import tech.algofinserve.marketdata.constants.InstrumentType;
 
 public class SymbolKeyUtil {
@@ -11,7 +11,7 @@ public class SymbolKeyUtil {
       String symbol,
       CandleTimeFrame candleTimeFrame,
       InstrumentType instrumentType,
-      ExchangeSegment exchangeSegment) {
+      ExchSeg exchSeg) {
     // RELIANCE-D-EQ-NSE
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append(symbol);
@@ -20,7 +20,7 @@ public class SymbolKeyUtil {
     stringBuilder.append(HYPEN);
     stringBuilder.append(instrumentType.value());
     stringBuilder.append(HYPEN);
-    stringBuilder.append(exchangeSegment.value());
+    stringBuilder.append(exchSeg.value());
     return stringBuilder.toString();
   }
 }

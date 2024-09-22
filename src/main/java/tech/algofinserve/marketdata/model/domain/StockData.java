@@ -10,6 +10,7 @@ public abstract class StockData implements Serializable {
 
   public StockData() {}
 
+  private Long id;
   private String symbolId;
   private LocalDateTime timestamp;
 

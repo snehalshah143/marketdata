@@ -1,10 +1,13 @@
 package tech.algofinserve.marketdata.model.persistable;
 
 import java.io.Serializable;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Document(collection = "instrument_ticker_angel")
+// @Document(collection = "instrument_ticker_angel")
+@Entity
+@Table(name = "instrument_ticker_angel")
 public class InstrumentTickerAngelPersistable implements Serializable {
   @Id private String token;
 

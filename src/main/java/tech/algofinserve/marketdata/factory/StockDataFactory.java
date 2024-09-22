@@ -1,19 +1,27 @@
 package tech.algofinserve.marketdata.factory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import tech.algofinserve.marketdata.constants.CandleTimeFrame;
-import tech.algofinserve.marketdata.dao.StockData15MinRepository;
-import tech.algofinserve.marketdata.dao.StockDataDailyRepository;
+import tech.algofinserve.marketdata.dao.sqllite.StockData15MinRepositorySqllite;
+import tech.algofinserve.marketdata.dao.sqllite.StockDataDailyRepositorySqllite;
 import tech.algofinserve.marketdata.model.domain.StockData;
 import tech.algofinserve.marketdata.model.domain.StockData15Min;
 import tech.algofinserve.marketdata.model.domain.StockDataDaily;
 
 @Component
 public class StockDataFactory {
-  @Autowired StockData15MinRepository stockData15MinRepository;
-  @Autowired StockDataDailyRepository stockDataDailyRepository;
+
+  /*  @Value("${db.type}")
+  private String dbType;*/
+  /*  @Autowired
+  StockData15MinRepositoryMongo stockData15MinRepositoryMongo;
+  @Autowired
+  StockDataDailyRepositoryMongo stockDataDailyRepositoryMongo;*/
+
+  @Autowired StockData15MinRepositorySqllite stockData15MinRepositorySqllite;
+  @Autowired StockDataDailyRepositorySqllite stockDataDailyRepositorySqllite;
 
   public static StockData getStockDataObject(CandleTimeFrame candleTimeFrame) {
 
@@ -41,13 +49,26 @@ public class StockDataFactory {
     }
   }
 
-  public MongoRepository getStockDataRepository(CandleTimeFrame candleTimeFrame) {
+  /*  public MongoRepository getStockDataRepositoryMongo(CandleTimeFrame candleTimeFrame) {
 
     switch (candleTimeFrame) {
       case ONE_DAY:
-        return stockDataDailyRepository;
+        return stockDataDailyRepositoryMongo;
       case FIFTEEN_MINUTE:
-        return stockData15MinRepository;
+        return stockData15MinRepositoryMongo;
+
+      default:
+        throw new IllegalArgumentException("Unknown timeFrame " + candleTimeFrame);
+    }
+  }*/
+
+  public JpaRepository getStockDataRepositorySqlite(CandleTimeFrame candleTimeFrame) {
+
+    switch (candleTimeFrame) {
+      case ONE_DAY:
+        return stockDataDailyRepositorySqllite;
+      case FIFTEEN_MINUTE:
+        return stockData15MinRepositorySqllite;
 
       default:
         throw new IllegalArgumentException("Unknown timeFrame " + candleTimeFrame);

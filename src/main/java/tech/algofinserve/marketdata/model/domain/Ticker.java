@@ -2,14 +2,14 @@ package tech.algofinserve.marketdata.model.domain;
 
 import java.io.Serializable;
 import java.util.Objects;
-import tech.algofinserve.marketdata.constants.ExchangeSegment;
+import tech.algofinserve.marketdata.constants.ExchSeg;
 import tech.algofinserve.marketdata.constants.InstrumentType;
 
 public class Ticker implements Serializable {
   String token;
   String stockSymbol;
   InstrumentType instrumentType;
-  ExchangeSegment exchangeSegment;
+  ExchSeg exchSeg;
 
   String stockSymbolExch;
   String sector;
@@ -39,12 +39,12 @@ public class Ticker implements Serializable {
     this.instrumentType = instrumentType;
   }
 
-  public ExchangeSegment getExchangeSegment() {
-    return exchangeSegment;
+  public ExchSeg getExchSeg() {
+    return exchSeg;
   }
 
-  public void setExchangeSegment(ExchangeSegment exchangeSegment) {
-    this.exchangeSegment = exchangeSegment;
+  public void setExchSeg(ExchSeg exchSeg) {
+    this.exchSeg = exchSeg;
   }
 
   public String getSector() {
@@ -79,14 +79,13 @@ public class Ticker implements Serializable {
     return token.equals(ticker.token)
         && stockSymbol.equals(ticker.stockSymbol)
         && instrumentType == ticker.instrumentType
-        && exchangeSegment == ticker.exchangeSegment
+        && exchSeg == ticker.exchSeg
         && Objects.equals(sector, ticker.sector)
         && Objects.equals(categorization, ticker.categorization);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(
-        token, stockSymbol, instrumentType, exchangeSegment, sector, categorization);
+    return Objects.hash(token, stockSymbol, instrumentType, exchSeg, sector, categorization);
   }
 }

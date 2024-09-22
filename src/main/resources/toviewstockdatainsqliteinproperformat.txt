@@ -1,0 +1,6 @@
+SELECT
+    symbol_id,timestamp,
+    strftime('%Y-%m-%d %H:%M:%S', timestamp ) AS formatted_timestamp,
+    datetime(timestamp / 1000, 'unixepoch')
+FROM
+    stock_data_daily;

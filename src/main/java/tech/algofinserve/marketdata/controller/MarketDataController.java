@@ -7,12 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.ta4j.core.Bar;
 import tech.algofinserve.infra.AngelApiKey;
 import tech.algofinserve.infra.AngelBrokerConnector;
 import tech.algofinserve.marketdata.constants.CandleTimeFrame;
-import tech.algofinserve.marketdata.constants.ExchangeSegment;
+import tech.algofinserve.marketdata.constants.ExchSeg;
 import tech.algofinserve.marketdata.constants.InstrumentType;
 import tech.algofinserve.marketdata.model.domain.StockData;
 import tech.algofinserve.marketdata.model.domain.Ticker;
@@ -32,12 +33,34 @@ public class MarketDataController {
 
     Ticker ticker = new Ticker();
     ticker.setToken(
-        metaDataService
-            .getInstrumentTickerForStockName("RELIANCE", ExchangeSegment.NSE)
-            .getToken());
+        metaDataService.getInstrumentTickerForStockName("RELIANCE", ExchSeg.NSE).getToken());
     ticker.setStockSymbol("RELIANCE");
-    ticker.setExchangeSegment(ExchangeSegment.NSE);
+    ticker.setExchSeg(ExchSeg.NSE);
     ticker.setInstrumentType(InstrumentType.EQ);
+    String fromDate = "2023-01-01 00:00";
+
+    String toDate = "2024-09-17 00:00";
+
+    Set<StockData> stockDataList =
+        angelMarketDataServiceImpl.getHistoricalDataForTicker(
+            smartConnect, ticker, CandleTimeFrame.ONE_DAY, fromDate, toDate);
+
+    return new ResponseEntity<String>("Data Download Completed For Symbol.", HttpStatus.OK);
+  }
+
+  @PostMapping(
+      path = "/marketdata/angel/downloadmarketdataforticker",
+      consumes = "application/json")
+  public ResponseEntity<String> downloadMarketDataForTicker(@RequestBody Ticker ticker) {
+
+    //  Ticker ticker = new Ticker();
+    ticker.setToken(
+        metaDataService
+            .getInstrumentTickerForStockName(ticker.getStockSymbol(), ticker.getExchSeg())
+            .getToken());
+    ticker.setStockSymbol(ticker.getStockSymbol());
+    ticker.setExchSeg(ticker.getExchSeg());
+    ticker.setInstrumentType(ticker.getInstrumentType());
     String fromDate = "2023-01-01 00:00";
 
     String toDate = "2024-09-17 00:00";
@@ -54,11 +77,9 @@ public class MarketDataController {
 
     Ticker ticker = new Ticker();
     ticker.setToken(
-        metaDataService
-            .getInstrumentTickerForStockName("RELIANCE", ExchangeSegment.NSE)
-            .getToken());
+        metaDataService.getInstrumentTickerForStockName("RELIANCE", ExchSeg.NSE).getToken());
     ticker.setStockSymbol("RELIANCE");
-    ticker.setExchangeSegment(ExchangeSegment.NSE);
+    ticker.setExchSeg(ExchSeg.NSE);
 
     String fromDate = "2023-01-01 00:00";
 
@@ -81,11 +102,9 @@ public class MarketDataController {
 
     Ticker ticker = new Ticker();
     ticker.setToken(
-        metaDataService
-            .getInstrumentTickerForStockName("RELIANCE", ExchangeSegment.NSE)
-            .getToken());
+        metaDataService.getInstrumentTickerForStockName("RELIANCE", ExchSeg.NSE).getToken());
     ticker.setStockSymbol("RELIANCE");
-    ticker.setExchangeSegment(ExchangeSegment.NSE);
+    ticker.setExchSeg(ExchSeg.NSE);
     ticker.setInstrumentType(InstrumentType.EQ);
     String fromDate = "2023-01-01 00:00";
 

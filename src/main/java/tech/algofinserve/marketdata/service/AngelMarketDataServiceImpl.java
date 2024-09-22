@@ -18,9 +18,9 @@ import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseBarSeries;
 import tech.algofinserve.marketdata.constants.CandleTimeFrame;
-import tech.algofinserve.marketdata.constants.ExchangeSegment;
+import tech.algofinserve.marketdata.constants.ExchSeg;
 import tech.algofinserve.marketdata.constants.InstrumentType;
-import tech.algofinserve.marketdata.dao.StockDataDailyRepository;
+import tech.algofinserve.marketdata.dao.sqllite.StockDataDailyRepositorySqllite;
 import tech.algofinserve.marketdata.factory.StockDataFactory;
 import tech.algofinserve.marketdata.mapper.StockDataDailyMapper;
 import tech.algofinserve.marketdata.model.domain.*;
@@ -30,9 +30,13 @@ import tech.algofinserve.marketdata.util.SymbolKeyUtil;
 
 @Service
 public class AngelMarketDataServiceImpl implements AngelMarketDataService {
-
+  /*  @Value("${db.type}")
+  private String dbType;*/
   @Autowired StockDataFactory stockDataFactory;
-  @Autowired StockDataDailyRepository stockDataDailyRepository;
+  /*  @Autowired
+  StockDataDailyRepositoryMongo stockDataDailyRepositoryMongo;*/
+
+  @Autowired StockDataDailyRepositorySqllite stockDataDailyRepositorySqllite;
 
   @Autowired StockDataDailyMapper stockDataDailyMapper;
 
@@ -51,9 +55,9 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
       SmartConnect smartConnect, Ticker ticker, CandleTimeFrame candleTimeFrame, String timeStamp) {
     String symbolId =
         SymbolKeyUtil.getSymbolId(
-            "RELIANCE", CandleTimeFrame.ONE_DAY, InstrumentType.EQ, ExchangeSegment.NSE);
+            "RELIANCE", CandleTimeFrame.ONE_DAY, InstrumentType.EQ, ExchSeg.NSE);
     Optional<List<StockDataDailyPersistable>> stockDataDailyPersistableList =
-        Optional.ofNullable(stockDataDailyRepository.findStockDataForSymbolKey(symbolId));
+        Optional.ofNullable(stockDataDailyRepositorySqllite.findAllBySymbolId(symbolId));
     List<StockData> stockDataList = Collections.EMPTY_LIST;
     if (stockDataDailyPersistableList.isPresent()) {
       stockDataList =
@@ -138,7 +142,7 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
             ticker.getStockSymbol(),
             candleTimeFrame,
             ticker.getInstrumentType(),
-            ticker.getExchangeSegment());
+            ticker.getExchSeg());
     stockData.setSymbolId(symbolId);
     stockData.setTimestamp(timestamp);
     //        stockData.setCandleNum(StockDataFactory.getStockDataCandleNumber(candleTimeFrame));
@@ -170,7 +174,7 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
       Ticker ticker, CandleTimeFrame candleTimeFrame, String fromDate, String toDate) {
     // String  dateFormatForRequest="yyyy-mm-dd hh:mm";
     JSONObject requestObject = new JSONObject();
-    requestObject.put("exchange", ticker.getExchangeSegment().value());
+    requestObject.put("exchange", ticker.getExchSeg().value());
     requestObject.put("symboltoken", ticker.getToken());
     requestObject.put("interval", candleTimeFrame.name());
     requestObject.put("fromdate", fromDate);
@@ -250,7 +254,7 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
         .append("_")
         .append(candleTimeFrame.value())
         .append("_")
-        .append(ticker.getExchangeSegment().value())
+        .append(ticker.getExchSeg().value())
         .append("_")
         .append(ticker.getInstrumentType().value())
         .toString();
@@ -261,8 +265,11 @@ public class AngelMarketDataServiceImpl implements AngelMarketDataService {
         stockDataList.stream()
             .map(p -> stockDataDailyMapper.mapDomainToPersistable((StockDataDaily) p))
             .collect(Collectors.toList());
-    stockDataFactory.getStockDataRepository(candleTimeFrame).insert(stockDataPersitableList);
-    //               .saveAll(stockDataPersitableList);
+
+    //
+    // stockDataFactory.getStockDataRepositoryMongo(candleTimeFrame).insert(stockDataPersitableList);
+
+    stockDataFactory.getStockDataRepositorySqlite(candleTimeFrame).saveAll(stockDataPersitableList);
   }
 
   public Set<StockData> getStockDataForTimeFrame(

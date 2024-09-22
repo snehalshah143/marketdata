@@ -1,13 +1,13 @@
 package tech.algofinserve.marketdata.constants;
 
-public enum ExchangeSegment {
+public enum ExchSeg {
   NSE("NSE"),
   BSE("BSE"),
   NFO("NFO");
 
   private final String value;
 
-  private ExchangeSegment(String value) {
+  private ExchSeg(String value) {
     this.value = value;
   }
 
@@ -15,11 +15,11 @@ public enum ExchangeSegment {
     return this.value;
   }
 
-  public ExchangeSegment fromValue(String value) {
-    ExchangeSegment[] exchangeSegments = values();
+  public ExchSeg fromValue(String value) {
+    ExchSeg[] exchSegs = values();
 
-    for (int i = 0; i < exchangeSegments.length; ++i) {
-      ExchangeSegment c = exchangeSegments[i];
+    for (int i = 0; i < exchSegs.length; ++i) {
+      ExchSeg c = exchSegs[i];
       if (c.value.equals(value)) {
         return c;
       }
